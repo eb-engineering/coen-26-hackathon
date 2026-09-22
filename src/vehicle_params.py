@@ -40,6 +40,7 @@ class VehicleParams:
     max_battery_mass_kg: float = 900.0
     max_powertrain_cost_index: float = 132.0
     max_speed_tracking_error_mps: float = 0.10
+    max_power_demanded_to_available_ratio: float = 1.001
 
     # --- Restrição mínima do desafio ---
     min_autonomia_km: float = 200.0
@@ -68,6 +69,10 @@ PARAM_RANGES = {
         "default": "battery_04",
     },
     "challenge_constraints": {
+        "torque_clipping_allowed": False,
+        "max_power_demanded_to_available_ratio": DEFAULT_VEHICLE.max_power_demanded_to_available_ratio,
+        "min_soc_pct": DEFAULT_VEHICLE.battery_min_soc_pct,
+        "max_soc_pct": DEFAULT_VEHICLE.battery_max_soc_pct,
         "min_autonomia_km": DEFAULT_VEHICLE.min_autonomia_km,
         "max_battery_mass_kg": DEFAULT_VEHICLE.max_battery_mass_kg,
         "max_powertrain_cost_index": DEFAULT_VEHICLE.max_powertrain_cost_index,

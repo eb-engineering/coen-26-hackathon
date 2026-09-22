@@ -87,11 +87,20 @@ def build_map(map_id, max_torque_nm, corner_speed_rpm, max_speed_rpm,
                 e = np.nan
             eff[i, j] = e
 
+    # Pontos fora do envelope são publicados como null. Isso mantém os arquivos
+    # como JSON estrito e diferencia claramente uma região inválida de uma
+    # eficiência física igual a zero. Ao carregar o mapa, o NumPy converte
+    # esses valores novamente para NaN para uso na interpolação.
+    efficiency_json = [
+        [None if math.isnan(float(value)) else float(value) for value in row]
+        for row in eff
+    ]
+
     data = {
         "id": map_id,
         "speed_rpm": speed_grid.tolist(),
         "torque_nm": torque_grid.tolist(),
-        "efficiency_pct": eff.tolist(),
+        "efficiency_pct": efficiency_json,
         "max_torque_nm": max_torque_nm,
         "corner_speed_rpm": corner_speed_rpm,
         "max_speed_rpm": max_speed_rpm,
@@ -101,7 +110,7 @@ def build_map(map_id, max_torque_nm, corner_speed_rpm, max_speed_rpm,
     }
     path = os.path.join(OUT_DIR, f"{map_id}.json")
     with open(path, "w") as f:
-        json.dump(data, f)
+        json.dump(data, f, allow_nan=False)
     print(f"wrote {path}  peak_power={data['max_power_kw']}kW  peak_eff~{peak_eff}%")
     return data
 
