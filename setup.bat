@@ -42,6 +42,9 @@ echo Pronto! Rode o simulador diretamente com o Python da .venv:
 echo     .venv\Scripts\python.exe src\run_from_config.py --config configs\example_config.json --output outputs\resultado.json
 echo ou:
 echo     .venv\Scripts\python.exe -m uvicorn api:app --app-dir src --reload --port 8000
+echo.
+echo Se estiver usando Git Bash, use barras normais:
+echo     ./.venv/Scripts/python.exe src/run_from_config.py --config configs/example_config.json --output outputs/resultado.json
 pause
 exit /b 0
 

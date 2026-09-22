@@ -97,8 +97,14 @@ Python 3.12 automaticamente pelo instalador oficial do python.org, somente no
 perfil do usuário. Não exige conta de administrador, não altera o `PATH` global
 e não é necessário configurar `Add Python to PATH`.
 
-```bash
+```bat
 setup.bat
+```
+
+No Git Bash do Windows:
+
+```bash
+cmd.exe /c setup.bat
 ```
 
 Instalação manual no Windows:
@@ -115,15 +121,28 @@ bash setup.sh
 ```
 
 Depois da instalação, os exemplos abaixo usam diretamente o Python da `.venv`,
-evitando qualquer ambiguidade com outros Pythons instalados na máquina. Em
-Linux ou macOS, substitua `.venv\Scripts\python.exe` por `.venv/bin/python`.
+evitando qualquer ambiguidade com outros Pythons instalados na máquina:
+
+| Terminal | Executável da `.venv` |
+|---|---|
+| Prompt de Comando do Windows | `.venv\Scripts\python.exe` |
+| PowerShell | `.\.venv\Scripts\python.exe` |
+| Git Bash no Windows | `./.venv/Scripts/python.exe` |
+| Linux ou macOS | `./.venv/bin/python` |
+
+No Git Bash, não use barras invertidas (`\`), pois elas são interpretadas como
+caracteres de escape.
 
 ## Execução pela CLI
 
+```bat
+.venv\Scripts\python.exe src\run_from_config.py --config configs\example_config.json --output outputs\resultado.json
+```
+
+No Git Bash, o mesmo comando é:
+
 ```bash
-.venv\Scripts\python.exe src/run_from_config.py \
-  --config configs/example_config.json \
-  --output outputs/resultado.json
+./.venv/Scripts/python.exe src/run_from_config.py --config configs/example_config.json --output outputs/resultado.json
 ```
 
 O arquivo de configuração contém as quatro variáveis ajustáveis. O resultado é
@@ -132,8 +151,14 @@ classificação final deve ser feita pela solução desenvolvida pela equipe.
 
 ## Execução pela API
 
-```bash
+```bat
 .venv\Scripts\python.exe -m uvicorn api:app --app-dir src --reload --port 8000
+```
+
+No Git Bash:
+
+```bash
+./.venv/Scripts/python.exe -m uvicorn api:app --app-dir src --reload --port 8000
 ```
 
 Depois de iniciar o servidor:
@@ -179,10 +204,11 @@ Para exportar a comparação entre velocidade de referência e velocidade
 simulada:
 
 ```bash
-.venv\Scripts\python.exe src/export_speed_comparison.py \
-  --result outputs/resultado.json \
-  --output outputs/velocidade.svg
+./.venv/Scripts/python.exe src/export_speed_comparison.py --result outputs/resultado.json --output outputs/velocidade.svg
 ```
+
+Em Linux ou macOS, use `./.venv/bin/python` no lugar de
+`./.venv/Scripts/python.exe`.
 
 ## Estrutura do repositório
 

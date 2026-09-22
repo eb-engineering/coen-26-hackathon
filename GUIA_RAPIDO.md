@@ -12,10 +12,15 @@ dependências no ambiente correto e confere a importação do NumPy.
 setup.bat
 ```
 
-Em Linux ou macOS, execute `bash setup.sh`.
+Em Linux ou macOS, execute `bash setup.sh`. No Git Bash do Windows, você pode
+executar `cmd.exe /c setup.bat` e depois usar `./.venv/Scripts/python.exe`.
 
-Nos comandos abaixo, Linux e macOS devem usar `.venv/bin/python` no lugar de
-`.venv\Scripts\python.exe`.
+Use o caminho correspondente ao terminal:
+
+- Prompt de Comando: `.venv\Scripts\python.exe`;
+- PowerShell: `.\.venv\Scripts\python.exe`;
+- Git Bash: `./.venv/Scripts/python.exe`;
+- Linux/macOS: `./.venv/bin/python`.
 
 ## 2. Rodar uma configuração
 
@@ -29,13 +34,21 @@ Edite somente estes campos em `configs/example_config.json`:
 Execute:
 
 ```bash
-.venv\Scripts\python.exe src/run_from_config.py --config configs/example_config.json --output outputs/resultado.json
+# Git Bash no Windows
+./.venv/Scripts/python.exe src/run_from_config.py --config configs/example_config.json --output outputs/resultado.json
+
+# Linux ou macOS
+./.venv/bin/python src/run_from_config.py --config configs/example_config.json --output outputs/resultado.json
 ```
 
 ## 3. Usar a API
 
 ```bash
-.venv\Scripts\python.exe -m uvicorn api:app --app-dir src --reload --port 8000
+# Git Bash no Windows
+./.venv/Scripts/python.exe -m uvicorn api:app --app-dir src --reload --port 8000
+
+# Linux ou macOS
+./.venv/bin/python -m uvicorn api:app --app-dir src --reload --port 8000
 ```
 
 Acesse `http://localhost:8000/docs`. Consulte `GET /parameters`, `GET /maps` e
