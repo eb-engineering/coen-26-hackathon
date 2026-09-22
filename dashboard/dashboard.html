@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Truck BEV — Painel de Simulação Longitudinal | EB</title>
+<style>
+  /*
+    ===== PALETA DE MARCA =====
+    Estas variáveis são um placeholder profissional — ainda não temos as
+    cores/fonte/logo oficiais da EB (não consegui acessar eb-io.com a partir
+    daqui). Assim que vocês enviarem a paleta oficial (hex) e o logo, é só
+    trocar os valores abaixo e o arquivo `--logo-url` mais adiante.
+  */
+  :root {
+    --bg: #0b0f14; --panel: #121822; --panel2: #182030; --text: #eef1f6; --muted: #8b96a8;
+    --accent: #d4a017; --accent2: #e8c766; --good: #3fb27f; --bad: #e0533d; --border: #232c3d;
+    --brand-1: #0b0f14; --brand-2: #d4a017;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); }
+  header { padding: 18px 28px; border-bottom: 2px solid var(--brand-2); background: linear-gradient(180deg, var(--brand-1), var(--bg)); display:flex; align-items:center; gap:14px; }
+  .brand-mark { width: 40px; height: 40px; border-radius: 8px; background: var(--brand-2); color:var(--brand-1); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:18px; letter-spacing:.02em; flex-shrink:0; }
+  header .titles { display:flex; flex-direction:column; }
+  header h1 { margin:0 0 2px 0; font-size: 19px; }
+  header p { margin:0; color: var(--muted); font-size: 12.5px; }
+  .wrap { padding: 20px 28px 60px; max-width: 1300px; margin: 0 auto; }
+  .loaders { display:flex; gap:16px; flex-wrap: wrap; margin-bottom: 22px; }
+  .loader { flex:1; min-width: 260px; background: var(--panel); border: 1px dashed var(--border); border-radius: 10px; padding: 16px; }
+  .loader.drag { border-color: var(--accent); background: var(--panel2); }
+  .loader h3 { margin: 0 0 8px; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em;}
+  .loader input[type=file] { color: var(--text); font-size: 12px; }
+  .loader .fname { font-size: 12px; color: var(--accent); margin-top: 6px; min-height: 16px;}
+  .kpis { display:grid; grid-template-columns: repeat(auto-fit, minmax(190px,1fr)); gap: 12px; margin-bottom: 24px; }
+  .kpi { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .kpi .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+  .kpi .value { font-size: 22px; font-weight: 600; margin-top: 4px; }
+  .kpi .sub { font-size: 12px; margin-top: 4px; }
+  .improve { color: var(--good); } .worsen { color: var(--bad); }
+  .row { display:flex; gap: 18px; flex-wrap: wrap; margin-bottom: 24px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px; flex: 1; min-width: 420px; }
+  .card h2 { font-size: 14px; margin: 0 0 10px; color: var(--text); }
+  .card .hint { font-size: 11px; color: var(--muted); margin-top: 6px;}
+  canvas { width: 100%; display:block; background: #0c111c; border-radius: 6px; }
+  .legend { display:flex; gap: 16px; font-size: 12px; margin-top: 8px; color: var(--muted); }
+  .legend span.dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
+  .metric-list { display:grid; gap:6px; }
+  .metric-row { display:flex; justify-content:space-between; gap:14px; padding:5px 0; border-bottom:1px solid var(--border); font-size:12px; }
+  .metric-row span:first-child { color:var(--muted); }
+  select, .toggle-btn { background: var(--panel2); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 5px 9px; font-size: 12px; }
+  .toggle-btn.active { background: var(--accent); color:#0c111c; font-weight:600; }
+  .empty { color: var(--muted); font-size: 13px; padding: 40px; text-align:center; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand-mark">EB</div>
+  <div class="titles">
+    <h1>Truck BEV — Painel de Simulação Longitudinal</h1>
+    <p>Hackathon EB · Ciclo misto UDDS + Rodoviário · Carregue um resultado "inicial" e um "melhor" (JSON exportado pelo simulador) para comparar.</p>
+  </div>
+</header>
+<div class="wrap">
+
+  <div class="loaders">
+    <div class="loader" id="loaderA">
+      <h3>Configuração inicial / baseline (JSON)</h3>
+      <input type="file" id="fileA" accept=".json">
+      <div class="fname" id="fnameA">Nenhum arquivo carregado</div>
+    </div>
+    <div class="loader" id="loaderB">
+      <h3>Melhor configuração / otimizada (JSON)</h3>
+      <input type="file" id="fileB" accept=".json">
+      <div class="fname" id="fnameB">Nenhum arquivo carregado</div>
+    </div>
+  </div>
+
+  <div id="content" style="display:none;">
+    <div class="kpis" id="kpis"></div>
+
+    <div class="row">
+      <div class="card" style="min-width:600px;">
+        <h2>Velocidade de referência vs. simulada
+          <select id="speedSelect" style="float:right"></select>
+        </h2>
+        <canvas id="speedChart" height="220"></canvas>
+        <div class="legend">
+          <span><span class="dot" style="background:var(--muted)"></span>Referência (ciclo)</span>
+          <span><span class="dot" style="background:var(--accent)"></span>Simulada</span>
+        </div>
+      </div>
+      <div class="card" style="min-width:340px;">
+        <h2>SOC da bateria ao longo do ciclo</h2>
+        <canvas id="socChart" height="220"></canvas>
+        <div class="legend">
+          <span><span class="dot" style="background:#e8c766"></span>Inicial</span>
+          <span><span class="dot" style="background:#d4a017"></span>Otimizada</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="card" style="min-width:600px;">
+        <h2>Pontos de operação do motor no mapa de eficiência
+          <select id="mapSelect" style="float:right"></select>
+        </h2>
+        <canvas id="mapChart" height="320"></canvas>
+        <div class="hint">Área colorida = eficiência (%) do mapa da EM da configuração selecionada. Pontos = valores reais de (velocidade, torque) visitados durante o ciclo.</div>
+      </div>
+      <div class="card" style="min-width:300px;">
+        <h2>Métricas técnicas</h2>
+        <div id="metricsA"></div>
+        <div style="height:10px"></div>
+        <div id="metricsB"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty" id="emptyMsg">Carregue pelo menos um JSON de resultado acima para ver os gráficos.</div>
+</div>
+
+<script>
+let dataA = null, dataB = null;
+
+function readFile(input, cb) {
+  input.addEventListener('change', (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const json = JSON.parse(ev.target.result);
+        cb(json, f.name);
+      } catch (err) {
+        alert('Não foi possível ler o JSON: ' + err.message);
+      }
+    };
+    reader.readAsText(f);
+  });
+}
+
+readFile(document.getElementById('fileA'), (json, name) => {
+  dataA = json;
+  document.getElementById('fnameA').textContent = name;
+  render();
+});
+readFile(document.getElementById('fileB'), (json, name) => {
+  dataB = json;
+  document.getElementById('fnameB').textContent = name;
+  render();
+});
+
+function fmt(x, digits=2) { return (x === null || x === undefined || isNaN(x)) ? '—' : Number(x).toFixed(digits); }
+
+function pctChange(base, opt) {
+  if (base === undefined || opt === undefined || base === 0) return null;
+  return ((opt - base) / Math.abs(base)) * 100;
+}
+
+function kpiCard(label, baseVal, optVal, unit, lowerIsBetter=true, digits=2) {
+  let sub = '';
+  if (baseVal !== undefined && optVal !== undefined) {
+    const d = pctChange(baseVal, optVal);
+    if (d !== null) {
+      const better = lowerIsBetter ? d < 0 : d > 0;
+      sub = `<div class="sub ${better ? 'improve' : 'worsen'}">${d>0?'+':''}${fmt(d,1)}% vs. inicial</div>`;
+    }
+  }
+  const shown = optVal !== undefined ? optVal : baseVal;
+  return `<div class="kpi"><div class="label">${label}</div><div class="value">${fmt(shown, digits)} ${unit}</div>${sub}</div>`;
+}
+
+function render() {
+  const any = dataA || dataB;
+  document.getElementById('content').style.display = any ? 'block' : 'none';
+  document.getElementById('emptyMsg').style.display = any ? 'none' : 'block';
+  if (!any) return;
+
+  const sA = dataA ? dataA.summary : {};
+  const sB = dataB ? dataB.summary : (dataA ? dataA.summary : {});
+
+  document.getElementById('kpis').innerHTML = [
+    kpiCard('Autonomia estimada', sA.autonomia_estimada_km, dataB ? sB.autonomia_estimada_km : undefined, 'km', false, 0),
+    kpiCard('Energia / 100 km', sA.kwh_per_100km, dataB ? sB.kwh_per_100km : undefined, 'kWh', true),
+    kpiCard('Massa total', sA.massa_total_kg, dataB ? sB.massa_total_kg : undefined, 'kg', true, 0),
+    kpiCard('Perda ôhmica da bateria', sA.battery_ir_loss_kwh, dataB ? sB.battery_ir_loss_kwh : undefined, 'kWh', true, 3),
+    kpiCard('SOC final', sA.final_soc_pct, dataB ? sB.final_soc_pct : undefined, '%', false, 1),
+    kpiCard('Erro de rastreio (RMS)', sA.trace_error_rms_mps, dataB ? sB.trace_error_rms_mps : undefined, 'm/s', true, 3),
+  ].join('');
+
+  // seletor do traço de velocidade
+  const speedSelect = document.getElementById('speedSelect');
+  speedSelect.innerHTML = '';
+  if (dataA) speedSelect.innerHTML += '<option value="A">Inicial</option>';
+  if (dataB) speedSelect.innerHTML += '<option value="B">Otimizada</option>';
+  speedSelect.onchange = drawSpeedChart;
+  drawSpeedChart();
+
+  drawSocChart();
+
+  const mapSelect = document.getElementById('mapSelect');
+  mapSelect.innerHTML = '';
+  if (dataA) mapSelect.innerHTML += '<option value="A">Mapa inicial</option>';
+  if (dataB) mapSelect.innerHTML += '<option value="B">Mapa otimizado</option>';
+  mapSelect.onchange = drawMapChart;
+  drawMapChart();
+
+  document.getElementById('metricsA').innerHTML = dataA ? technicalMetricsHtml('Inicial', dataA) : '';
+  document.getElementById('metricsB').innerHTML = dataB ? technicalMetricsHtml('Otimizada', dataB) : '';
+}
+
+function technicalMetricsHtml(label, d) {
+  const s = d.summary || {};
+  return `<div style="font-size:12px;color:var(--muted);margin-bottom:6px;">${label} — ${d.inputs.battery_id} · ${d.inputs.em_map_id} · relação ${d.inputs.final_drive_ratio}</div>
+          <div class="metric-list">
+             <div class="metric-row"><span>Massa da bateria</span><span>${fmt(s.battery_mass_kg,0)} kg</span></div>
+             <div class="metric-row"><span>Custo do powertrain</span><span>${fmt(s.powertrain_cost_index,1)}</span></div>
+             <div class="metric-row"><span>Torque demandado / disponível</span><span>${fmt(s.max_torque_demanded_nm,1)} / ${fmt(s.max_torque_available_nm,1)} Nm</span></div>
+             <div class="metric-row"><span>Potência demandada / disponível</span><span>${fmt(s.max_power_demanded_kw,1)} / ${fmt(s.max_power_available_kw,1)} kW</span></div>
+             <div class="metric-row"><span>Erro máximo de velocidade</span><span>${fmt(s.max_speed_error_mps,3)} m/s</span></div>
+             <div class="metric-row"><span>SOC mínimo</span><span>${fmt(s.min_soc_pct,2)}%</span></div>
+             <div class="metric-row"><span>Autonomia estimada</span><span>${fmt(s.autonomia_estimada_km,0)} km</span></div>
+          </div>`;
+}
+
+function drawSpeedChart() {
+  const which = document.getElementById('speedSelect').value || (dataA ? 'A' : 'B');
+  const d = which === 'A' ? dataA : dataB;
+  const canvas = document.getElementById('speedChart');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.clientWidth; canvas.height = 220;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  if (!d) return;
+  const t = d.trace.time_s, ref = d.trace.speed_ref_mps, sim = d.trace.speed_sim_mps;
+  plotLines(ctx, canvas, t, [{y: ref, color: '#8b96a8'}, {y: sim, color: '#d4a017'}]);
+}
+
+function drawSocChart() {
+  const canvas = document.getElementById('socChart');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.clientWidth; canvas.height = 220;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const series = [];
+  if (dataA) series.push({y: dataA.trace.soc_pct, color: '#e8c766'});
+  if (dataB) series.push({y: dataB.trace.soc_pct, color: '#d4a017'});
+  if (series.length === 0) return;
+  const t = (dataA || dataB).trace.time_s;
+  plotLines(ctx, canvas, t, series, true);
+}
+
+function plotLines(ctx, canvas, t, series, yFromZero=false) {
+  const pad = {l:38,r:10,t:10,b:22};
+  const w = canvas.width - pad.l - pad.r, h = canvas.height - pad.t - pad.b;
+  let ymin = Infinity, ymax = -Infinity;
+  series.forEach(s => s.y.forEach(v => { if (v<ymin) ymin=v; if (v>ymax) ymax=v; }));
+  if (yFromZero) ymin = Math.min(ymin, 0);
+  if (ymax === ymin) ymax = ymin + 1;
+  const xmax = t[t.length-1];
+  const X = (x) => pad.l + (x/xmax)*w;
+  const Y = (y) => pad.t + h - ((y-ymin)/(ymax-ymin))*h;
+
+  ctx.strokeStyle = '#2a3450'; ctx.lineWidth=1; ctx.font='10px sans-serif'; ctx.fillStyle='#93a0b8';
+  for (let i=0;i<=4;i++){
+    const yy = ymin + (ymax-ymin)*i/4;
+    const py = Y(yy);
+    ctx.beginPath(); ctx.moveTo(pad.l,py); ctx.lineTo(pad.l+w,py); ctx.stroke();
+    ctx.fillText(yy.toFixed(1), 2, py+3);
+  }
+  ctx.fillText('tempo (s)', pad.l+w-40, pad.t+h+16);
+
+  series.forEach(s => {
+    ctx.strokeStyle = s.color; ctx.lineWidth = 1.6; ctx.beginPath();
+    for (let i=0;i<t.length;i++){
+      const x = X(t[i]), y = Y(s.y[i]);
+      if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  });
+}
+
+function effColor(pct, lo, hi) {
+  if (pct === null || pct === undefined) return null;
+  const f = Math.max(0, Math.min(1, (pct - lo) / (hi - lo)));
+  // blue (low) -> cyan -> yellow -> red (high), simple HSL sweep
+  const hue = 240 - f*240; // 240 blue -> 0 red
+  return `hsl(${hue}, 85%, 50%)`;
+}
+
+function drawMapChart() {
+  const which = document.getElementById('mapSelect').value || (dataA ? 'A' : 'B');
+  const d = which === 'A' ? dataA : dataB;
+  const canvas = document.getElementById('mapChart');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.clientWidth; canvas.height = 320;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  if (!d) return;
+  const meta = d.map_metadata;
+  const speeds = meta.speed_rpm, torques = meta.torque_nm, eff = meta.efficiency_pct;
+
+  const pad = {l:46,r:14,t:10,b:26};
+  const w = canvas.width - pad.l - pad.r, h = canvas.height - pad.t - pad.b;
+  const smax = speeds[speeds.length-1], tmax = torques[torques.length-1];
+  const X = (s) => pad.l + (s/smax)*w;
+  const Y = (tq) => pad.t + h - (tq/tmax)*h;
+
+  let lo=100, hi=0;
+  eff.forEach(row => row.forEach(v => { if (v!==null){ if(v<lo)lo=v; if(v>hi)hi=v; }}));
+
+  const cellW = w/(speeds.length-1), cellH = h/(torques.length-1);
+  for (let i=0;i<speeds.length-1;i++){
+    for (let j=0;j<torques.length-1;j++){
+      const v = eff[i][j];
+      const c = effColor(v, lo, hi);
+      if (!c) continue;
+      ctx.fillStyle = c;
+      const x = X(speeds[i]), y = Y(torques[j+1]);
+      ctx.fillRect(x, y, cellW+1, cellH+1);
+    }
+  }
+
+  // axes labels
+  ctx.fillStyle = '#93a0b8'; ctx.font = '10px sans-serif';
+  ctx.fillText('0', pad.l-10, pad.t+h+14);
+  ctx.fillText(Math.round(smax)+' rpm', pad.l+w-40, pad.t+h+14);
+  ctx.save(); ctx.translate(12, pad.t+h/2); ctx.rotate(-Math.PI/2); ctx.fillText('Torque (N·m)', -20, 0); ctx.restore();
+
+  // operating points
+  const spd = d.trace.motor_speed_rpm, tq = d.trace.motor_torque_nm;
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  for (let i=0;i<spd.length;i+=2){
+    if (spd[i]===0 && tq[i]===0) continue;
+    ctx.beginPath();
+    ctx.arc(X(spd[i]), Y(Math.abs(tq[i])), 1.6, 0, 2*Math.PI);
+    ctx.fill();
+  }
+}
+</script>
+</body>
+</html>

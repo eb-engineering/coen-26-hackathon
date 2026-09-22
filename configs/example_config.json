@@ -1,0 +1,6 @@
+{
+  "final_drive_ratio": 8.0,
+  "initial_soc_pct": 90.0,
+  "em_map_id": "motor_04",
+  "battery_id": "battery_04"
+}

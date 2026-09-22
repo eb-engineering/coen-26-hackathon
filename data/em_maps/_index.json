@@ -1,0 +1,110 @@
+[
+  {
+    "id": "motor_01",
+    "max_torque_nm": 550,
+    "corner_speed_rpm": 2600,
+    "max_speed_rpm": 9000,
+    "max_power_kw": 149.7,
+    "mass_kg": 220,
+    "cost_index": 42
+  },
+  {
+    "id": "motor_02",
+    "max_torque_nm": 750,
+    "corner_speed_rpm": 1800,
+    "max_speed_rpm": 6000,
+    "max_power_kw": 141.4,
+    "mass_kg": 240,
+    "cost_index": 45
+  },
+  {
+    "id": "motor_03",
+    "max_torque_nm": 650,
+    "corner_speed_rpm": 2800,
+    "max_speed_rpm": 10000,
+    "max_power_kw": 190.6,
+    "mass_kg": 320,
+    "cost_index": 65
+  },
+  {
+    "id": "motor_04",
+    "max_torque_nm": 900,
+    "corner_speed_rpm": 2200,
+    "max_speed_rpm": 8000,
+    "max_power_kw": 207.3,
+    "mass_kg": 360,
+    "cost_index": 58
+  },
+  {
+    "id": "motor_05",
+    "max_torque_nm": 400,
+    "corner_speed_rpm": 4500,
+    "max_speed_rpm": 12000,
+    "max_power_kw": 188.5,
+    "mass_kg": 230,
+    "cost_index": 50
+  },
+  {
+    "id": "motor_06",
+    "max_torque_nm": 500,
+    "corner_speed_rpm": 2400,
+    "max_speed_rpm": 7500,
+    "max_power_kw": 125.7,
+    "mass_kg": 180,
+    "cost_index": 30
+  },
+  {
+    "id": "motor_07",
+    "max_torque_nm": 900,
+    "corner_speed_rpm": 1400,
+    "max_speed_rpm": 5500,
+    "max_power_kw": 131.9,
+    "mass_kg": 330,
+    "cost_index": 50
+  },
+  {
+    "id": "motor_08",
+    "max_torque_nm": 350,
+    "corner_speed_rpm": 5200,
+    "max_speed_rpm": 13000,
+    "max_power_kw": 190.6,
+    "mass_kg": 210,
+    "cost_index": 55
+  },
+  {
+    "id": "motor_09",
+    "max_torque_nm": 500,
+    "corner_speed_rpm": 3000,
+    "max_speed_rpm": 9000,
+    "max_power_kw": 157.1,
+    "mass_kg": 150,
+    "cost_index": 38
+  },
+  {
+    "id": "motor_10",
+    "max_torque_nm": 700,
+    "corner_speed_rpm": 2600,
+    "max_speed_rpm": 9500,
+    "max_power_kw": 190.6,
+    "mass_kg": 285,
+    "cost_index": 58
+  },
+  {
+    "id": "motor_11",
+    "max_torque_nm": 1000,
+    "corner_speed_rpm": 1600,
+    "max_speed_rpm": 6500,
+    "max_power_kw": 167.6,
+    "mass_kg": 400,
+    "cost_index": 44
+  },
+  {
+    "id": "motor_12",
+    "max_torque_nm": 650,
+    "corner_speed_rpm": 2500,
+    "max_speed_rpm": 8500,
+    "max_power_kw": 170.2,
+    "mass_kg": 260,
+    "cost_index": 52
+  }
+]

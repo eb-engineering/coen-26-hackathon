@@ -1,0 +1,34 @@
+{
+  "id": "battery_09",
+  "capacidade_kwh": 220,
+  "massa_kg": 1600,
+  "volume_l": 1390,
+  "custo_relativo": 132,
+  "resistencia_interna_mohm": 90,
+  "eficiencia_estimada_pct_a_100kw": 94.38,
+  "soc_peak_efficiency_pct": 50,
+  "soc_breakpoints_pct": [
+    10,
+    20,
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90,
+    100
+  ],
+  "soc_efficiency_pct": [
+    92.745,
+    94.205,
+    95.947,
+    97.418,
+    98.0,
+    97.418,
+    95.947,
+    94.205,
+    92.745,
+    91.799
+  ]
+}

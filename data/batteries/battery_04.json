@@ -1,0 +1,34 @@
+{
+  "id": "battery_04",
+  "capacidade_kwh": 105,
+  "massa_kg": 640,
+  "volume_l": 590,
+  "custo_relativo": 65,
+  "resistencia_interna_mohm": 80,
+  "eficiencia_estimada_pct_a_100kw": 95.0,
+  "soc_peak_efficiency_pct": 45,
+  "soc_breakpoints_pct": [
+    10,
+    20,
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90,
+    100
+  ],
+  "soc_efficiency_pct": [
+    92.975,
+    94.67,
+    96.548,
+    97.822,
+    97.822,
+    96.548,
+    94.67,
+    92.975,
+    91.864,
+    91.308
+  ]
+}
