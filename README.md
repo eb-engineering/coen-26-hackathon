@@ -1,12 +1,13 @@
-# Modelo final calibrado Truck BEV — Hackathon EB
+# Modelo de Caminhão BEV — Hackathon
 
-Esta é a versão final calibrada do simulador longitudinal quase-estático de um
-caminhão elétrico a bateria. Ela inclui os 12 mapas de motor, as 10 baterias com
-eficiência dependente do SOC, limites de massa e custo, envelopes de torque e
-potência, saturação dinâmica e comparação entre velocidade de referência e
-velocidade realizada.
+Simulador longitudinal de um caminhão elétrico a bateria para o desenvolvimento
+de workflows com agentes de IA.
 
-A estratégia de análise, otimização e validação deve ser desenvolvida pela
+**Entradas:** relação de transmissão final, SOC inicial, mapa do motor e bateria.
+
+**Saídas:** consumo de energia, autonomia estimada, desempenho longitudinal,
+SOC, solicitações de torque e potência e séries temporais da simulação. O modelo
+não informa se a solução é válida; essa avaliação deve ser implementada pela
 equipe participante.
 
 ## Objetivo
@@ -17,6 +18,27 @@ custo, capacidade de torque e potência, acompanhamento do ciclo de velocidade e
 limites de SOC.
 
 A configuração de exemplo é propositalmente inválida.
+
+## Orçamento e modelos de LLM
+
+Cada equipe possui um orçamento máximo de **US$ 4 em consumo de LLMs**.
+Estão disponíveis modelos de diferentes capacidades e custos via OpenRouter. A
+escolha do modelo, a quantidade de chamadas, o tamanho dos prompts, o uso de
+memória e a distribuição dos modelos entre agentes fazem parte da solução
+proposta.
+
+| Modelo | ID para usar no código / OpenRouter | Input — US$/1M tokens | Output — US$/1M tokens |
+|---|---|---:|---:|
+| Google Gemini 2.5 Flash Lite | `google/gemini-2.5-flash-lite` | $0.10 | $0.40 |
+| OpenAI GPT-OSS 20B | `openai/gpt-oss-20b` | $0.018 | $0.09 |
+| DeepSeek V4.1 Flash | `deepseek/deepseek-v4.1-flash` | $0.12 | $0.48 |
+| OpenAI GPT-OSS 120B | `openai/gpt-oss-120b` | $0.03 | $0.17 |
+| Google Gemini 2.5 Pro | `google/gemini-2.5-pro` | $1.25 | $10.00 |
+| Anthropic Claude Sonnet 5 | `anthropic/claude-sonnet-5` | $2.00 | $10.00 |
+| OpenAI GPT-5.6 Luna | `openai/gpt-5.6-luna` | $0.20 | $1.20 |
+| Anthropic Claude Opus 5 | `anthropic/claude-opus-5` | $5.00 | $25.00 |
+| Google Gemini 3.5 Flash Lite | `google/gemini-3.5-flash-lite` | $0.30 | $2.50 |
+| Qwen Qwen3.6 Plus | `qwen/qwen3.6-plus` | $0.325 | $1.95 |
 
 ## Variáveis ajustáveis
 
