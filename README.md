@@ -93,8 +93,9 @@ em `data/REFERENCIA_COMPONENTES.md`. Os JSONs em `data/em_maps/` e
 No Windows, use preferencialmente `setup.bat`. Ele procura explicitamente
 Python 3.10 ou mais recente e ignora um eventual Python 2 associado ao comando
 `python`. Se Python 3 não estiver instalado, o próprio script tenta instalar
-Python 3.12 automaticamente pelo `winget` ou pelo instalador oficial do
-python.org. Não é necessário configurar `Add Python to PATH`.
+Python 3.12 automaticamente pelo instalador oficial do python.org, somente no
+perfil do usuário. Não exige conta de administrador, não altera o `PATH` global
+e não é necessário configurar `Add Python to PATH`.
 
 ```bash
 setup.bat

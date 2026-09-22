@@ -4,9 +4,9 @@
 
 No Windows, execute `setup.bat`. Ele seleciona explicitamente Python 3.10 ou
 mais recente, ignorando um eventual Python 2. Se necessário, instala Python
-3.12 automaticamente, sem depender da opção `Add Python to PATH`. Em seguida,
-recria a `.venv`, instala as dependências no ambiente correto e confere a
-importação do NumPy.
+3.12 automaticamente no perfil do usuário, sem conta de administrador e sem
+depender da opção `Add Python to PATH`. Em seguida, recria a `.venv`, instala as
+dependências no ambiente correto e confere a importação do NumPy.
 
 ```bat
 setup.bat

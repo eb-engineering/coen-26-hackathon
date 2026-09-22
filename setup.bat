@@ -91,26 +91,20 @@ for %%V in (314 313 312 311 310) do (
 exit /b 0
 
 :install_python3
-where winget >nul 2>nul
-if not errorlevel 1 (
-    echo Instalando Python 3.12 com winget...
-    winget install --exact --id Python.Python.3.12 --scope user --silent --accept-package-agreements --accept-source-agreements
-    if not errorlevel 1 exit /b 0
-    echo O winget nao conseguiu instalar. Tentando o instalador oficial...
-)
-
 set "PYTHON_VERSION=3.12.10"
 set "PYTHON_ARCH=amd64"
 if /I "%PROCESSOR_ARCHITECTURE%"=="ARM64" set "PYTHON_ARCH=arm64"
 set "PYTHON_INSTALLER=%TEMP%\python-%PYTHON_VERSION%-%PYTHON_ARCH%.exe"
 set "PYTHON_URL=https://www.python.org/ftp/python/%PYTHON_VERSION%/python-%PYTHON_VERSION%-%PYTHON_ARCH%.exe"
+set "PYTHON_TARGET=%LocalAppData%\Programs\Python\Python312"
 
 echo Baixando o instalador oficial de %PYTHON_URL% ...
 powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$ProgressPreference='SilentlyContinue'; Invoke-WebRequest -UseBasicParsing -Uri '%PYTHON_URL%' -OutFile '%PYTHON_INSTALLER%'"
 if errorlevel 1 exit /b 1
 
-echo Instalando Python %PYTHON_VERSION% silenciosamente para o usuario atual...
-start /wait "" "%PYTHON_INSTALLER%" /quiet InstallAllUsers=0 PrependPath=0 Include_launcher=1 Include_test=0 SimpleInstall=1
+echo Instalando Python %PYTHON_VERSION% somente para o usuario atual...
+echo Nao sera solicitada conta de administrador e o PATH global nao sera alterado.
+start /wait "" "%PYTHON_INSTALLER%" /quiet InstallAllUsers=0 TargetDir="%PYTHON_TARGET%" PrependPath=0 Include_launcher=0 AssociateFiles=0 Shortcuts=0 Include_test=0 Include_pip=1 Include_doc=0 Include_tcltk=0
 set "INSTALL_RESULT=%ERRORLEVEL%"
 del /q "%PYTHON_INSTALLER%" >nul 2>nul
 if not "%INSTALL_RESULT%"=="0" exit /b 1
@@ -119,7 +113,7 @@ exit /b 0
 :python_install_error
 echo.
 echo ERRO: nao foi possivel instalar automaticamente o Python 3.
-echo Verifique a conexao com a internet e se o Windows permite instalar aplicativos.
+echo Verifique a internet e se a politica do computador permite aplicativos no perfil do usuario.
 echo Nenhuma opcao "Add Python to PATH" e necessaria para este setup.
 pause
 exit /b 1
